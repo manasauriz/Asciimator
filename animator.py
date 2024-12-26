@@ -1,114 +1,123 @@
-from ansi import Ansi
+import ansi
 import keyboard
 
 
-class Animator:
+def run(animation):
+    global x, y, frames, width, height, cur
+    frames = animation.frames
+    width = animation.width
+    height = animation.height
+    x, y, cur = 2, 2, -1
 
-    def __init__(self, animation):
-        self.anim = animation
-        self.W = animation.width
-        self.H = animation.height
-        self.frame = ""
-        self.cur = 0
+    window()
+    ansi.place(x, y + 1, "^")
 
-    def run(self):
-        Ansi.hide()
-        Ansi.clear()
-        keyboard.block_key('enter')
+    while True:
+        event = keyboard.read_event()
+        key = event.name
 
-        self.draw_window()
-        self.new_frame()
+        if event.event_type == keyboard.KEY_DOWN:
+            ansi.place(x, y + 1, frames[cur][index(x, y + 1)])
 
-        while True:
+            if key == 'esc': 
+                break
 
-            event = keyboard.read_event()
-            key = event.name
+            elif key == 'up' and y > 2: 
+                y -= 1
+            elif key == 'down' and y < height + 1: 
+                y += 1
+            elif key == 'left' and x > 2: 
+                x -= 1
+            elif key == 'right' and x < width + 1: 
+                x += 1
 
-            if event.event_type == keyboard.KEY_DOWN:
-                Ansi.place(self.x, self.y + 1, self.frame[self.index(self.x, self.y + 1)])
+            elif len(key) == 1:
+                add_character(key)
+                if x < width + 1:
+                    x += 1
 
-                if key == 'esc': 
-                    break
+            elif key == 'space' or key == 'backspace' or key == 'delete':
+                add_character(" ")
+                if key == 'space' and x < width + 1:
+                    x += 1
+                if key == 'backspace' and x > 2:
+                    x -= 1
+                    
+            elif key == 'shift':
+                second_event = keyboard.read_event()
+                second_key = second_event.name
+                if second_event.event_type == keyboard.KEY_DOWN and len(second_key) == 1:
+                    add_character(second_key)
+                    if x < width + 1:
+                        x += 1
 
-                elif key == 'up' and self.y > 2: 
-                    self.y -= 1
-                elif key == 'down' and self.y < self.H + 1: 
-                    self.y += 1
-                elif key == 'left' and self.x > 2: 
-                    self.x -= 1
-                elif key == 'right' and self.x < self.W + 1: 
-                    self.x += 1
+            elif key == 'ctrl':
+                second_event = keyboard.read_event()
+                second_key = second_event.name
+                if second_event.event_type == keyboard.KEY_DOWN:
+                    if second_key == 'right':
+                        if cur >= len(frames) - 1:
+                            new_frame()
+                        else:
+                            cur += 1
+                            ansi.place(1, 1, frames[cur])
+                    elif second_key == 'left' and cur > 0:
+                        cur -= 1
+                        ansi.place(1, 1, frames[cur])
+            
+                    elif second_key == 'z':
+                        global copied
+                        copied = frames[cur]
+                    elif second_key == 'x' and copied:
+                        frames[cur] = copied
+                        ansi.place(1, 1, copied)
 
-                elif len(key) == 1:
-                    self.add_character(key)
-                    if self.x < self.W + 1:
-                        self.x += 1
-                elif key == 'space' or key == 'backspace' or key == 'delete':
-                    self.add_character(" ")
-                    if key == 'space' and self.x < self.W + 1:
-                        self.x += 1
-                elif key == 'shift':
-                    second_event = keyboard.read_event()
-                    second_key = second_event.name
-                    if second_event.event_type == keyboard.KEY_DOWN and len(second_key) == 1:
-                        self.add_character(second_key)
-                        if self.x < self.W + 1:
-                            self.x += 1
+            ansi.place(x, y + 1, "^")
+    quit()   
+        
 
-                elif key == 'ctrl':
-                    second_event = keyboard.read_event()
-                    second_key = second_event.name
-                    if second_event.event_type == keyboard.KEY_DOWN:
-                        if second_key == 'right':
-                            self.new_frame()
-                        elif second_key == 'left' and 1 < self.cur <= len(self.anim.frames):
-                            self.load_frame(self.cur - 2)
+def window():
+    ansi.hide()
+    ansi.clear()
+    keyboard.block_key('enter')
+    
+    new_frame()
+    ansi.place(0, height + 3, "Press <esc> to exit")
+    ansi.place(0, height + 4, "Use <ctrl + z> and <ctrl + x> for copy-pasting frames")
+    ansi.place(0, height + 5, "Press <ctrl + right> to go to next frame")
+    ansi.place(0, height + 6, "Press <ctrl + left> to go to previous frame")
 
-                Ansi.place(self.x, self.y + 1, "^")
-                
-        keyboard.unblock_key('enter')
-        Ansi.place(0, self.H + 6)
-        Ansi.show()
 
-    def add_character(self, c):
-        Ansi.place(self.x, self.y, c)
-        i = self.index(self.x, self.y)
-        self.frame = self.frame[:i] + c + self.frame[i + 1:]
-        self.anim.frames[self.cur - 1] = self.frame
+def quit():
+    keyboard.unblock_key('enter')
+    ansi.place(0, height + 6)
+    ansi.show()
 
-    def draw_window(self):
-        Ansi.place(0, self.H + 3, "Press <esc> to exit")
-        Ansi.place(0, self.H + 5, "Press <ctrl> + <right> to go to next frame")
-        Ansi.place(0, self.H + 6, "Press <ctrl> + <left> to go to next frame")
 
-    def new_frame(self):
-        self.frame = ""
-        top_bottom = f"+{'-' * self.W}+"
-        Ansi.place(1, 1, top_bottom)
-        self.frame = top_bottom + "\n"
+def new_frame():
+    global cur
+    cur += 1
+    frames.append("")
 
-        middle = "|" + (" " * self.W) + "|"
-        for i in range(2, self.H + 2):
-            Ansi.place(1, i, middle)
-            self.frame += middle + "\n"
+    top_bottom = f"+{'-' * width}+"
+    ansi.place(1, 1, top_bottom)
+    frames[cur] += top_bottom + "\n"
 
-        Ansi.place(1, self.H + 2, top_bottom)
-        self.x = 2
-        self.y = 2
-        Ansi.place(self.x, self.y + 1, "^")
+    middle = "|" + (" " * width) + "|"
+    for i in range(2, height + 2):
+        ansi.place(1, i, middle)
+        frames[cur] += middle + "\n"
 
-        self.frame += top_bottom
-        self.anim.frames.append(self.frame)
-        self.cur += 1
+    ansi.place(1, height + 2, top_bottom)
+    frames[cur] += top_bottom
 
-    def load_frame(self, n):
-        self.frame = self.anim.frames[n]
-        Ansi.place(1, 1, self.frame)
-        self.x = 2
-        self.y = 2
-        Ansi.place(self.x, self.y + 1, "^")
-        self.cur -= 1
 
-    # calculates where index would be in str frame according to current x, y co-ords
-    def index(self, x, y):
-        return ((self.W + 3) * (y - 1)) + (x - 1)
+def index(x, y):
+    '''calculates where index would be in str frame according to current x, y co-ords'''
+    return ((width + 3) * (y - 1)) + (x - 1)
+
+
+def add_character(c):
+    ansi.place(x, y, c)
+    i = index(x, y)
+    frames[cur] = frames[cur][:i] + c + frames[cur][i + 1:]
