@@ -6,14 +6,14 @@ class Animation:
         self.frames = []
 
     def save(self):
-        with open(f"{self.name}.txt", "w") as file:
+        with open(f"projects/{self.name}.txt", "w") as file:
             file.write(f"{self.name}\n{self.width}\n{self.height}\n")
             for frame in self.frames:
-                file.write(frame+"\n")
+                file.write(frame)
 
     @classmethod
     def load(cls, file_name):
-        with open(file_name, "r") as file:
+        with open(f"projects/{file_name}", "r") as file:
             name = file.readline().strip()
             width = int(file.readline().strip())
             height = int(file.readline().strip())

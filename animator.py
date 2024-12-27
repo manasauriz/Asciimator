@@ -120,7 +120,7 @@ def new_frame() -> None:
         frames[cur] += middle + "\n"
 
     ansi.place(1, height + 2, top_bottom)
-    frames[cur] += top_bottom
+    frames[cur] += top_bottom + "\n"
     ansi.place(0, height + 6, f"Current Frame: {cur + 1}")
 
 

@@ -52,10 +52,12 @@ def new_project() -> None:
 
 def load_project():
     all_files = {}
-    for i, file in enumerate(os.listdir("."), start=1):
+    i = 1
+    for file in os.listdir("./projects"):
         if file.endswith(".txt"):
             print(f"{i}. {file.capitalize()[:-4]}")
             all_files[i] = file
+            i += 1
 
     file_name = input("Enter File Name: ").strip().lower()
     if not file_name.endswith(".txt"):
