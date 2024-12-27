@@ -22,11 +22,13 @@ class Animation:
             frame = ""
             cur = 0
             for line in file.readlines():
-                if cur < width + 2:
+                if cur < height + 2:
                     frame += line
+                    cur += 1
                 else:
                     animation.frames.append(frame)
-                    frame = ""
-                    cur = 0
+                    frame = line
+                    cur = 1
+            animation.frames.append(frame)
 
             return animation

@@ -5,11 +5,12 @@ import pygetwindow as gw
 
 
 def run(animation) -> None:
-    global x, y, frames, width, height, cur
-    frames = animation.frames
+    global width, height, frames, cur, x, y
     width = animation.width
     height = animation.height
-    x, y, cur = 2, 2, -1
+    frames = animation.frames
+    cur = len(frames) - 1
+    x, y = 2, 2
 
     window()
 
@@ -69,10 +70,10 @@ def run(animation) -> None:
                             new_frame()
                         else:
                             cur += 1
-                            ansi.place(1, 1, frames[cur])
+                            current_frame()
                     elif second_key == 'left' and cur > 0:
                         cur -= 1
-                        ansi.place(1, 1, frames[cur])
+                        current_frame()
             
                     elif second_key == 'z':
                         global copied
@@ -87,11 +88,15 @@ def run(animation) -> None:
 def window() -> None:
     ansi.hide()
     ansi.clear()
-    new_frame()
+
+    if cur == -1:
+        new_frame()
+    else:
+        current_frame()
+
     ansi.place(0, height + 3, "Press <esc> to exit")
     ansi.place(0, height + 4, "Use <ctrl + z> and <ctrl + x> for copy-pasting frames")
-    ansi.place(0, height + 5, "Press <ctrl + right> to go to next frame")
-    ansi.place(0, height + 6, "Press <ctrl + left> to go to previous frame")
+    ansi.place(0, height + 5, "Press <ctrl + right> to go to next frame, <ctrl + left> to go to previous frame")
 
 
 def quit() -> None:
@@ -116,6 +121,12 @@ def new_frame() -> None:
 
     ansi.place(1, height + 2, top_bottom)
     frames[cur] += top_bottom
+    ansi.place(0, height + 6, f"Current Frame: {cur + 1}")
+
+
+def current_frame() -> None:
+    ansi.place(1, 1, frames[cur])
+    ansi.place(0, height + 6, f"Current Frame: {cur + 1}")
 
 
 def index(x, y):

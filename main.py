@@ -41,12 +41,12 @@ def new_project() -> None:
             if not name or name == "":
                 raise ValueError
             width = int(input("Enter Frame Width: "))
-            length = int(input("Enter Frame Length: "))
+            height = int(input("Enter Frame Height: "))
             break
         except ValueError:
             print("Error: Enter a valid name and number!")
 
-    movie = Animation(name.strip().lower(), width, length)
+    movie = Animation(name.strip().lower(), width, height)
     animator.run(movie)
 
 
