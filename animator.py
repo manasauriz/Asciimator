@@ -4,7 +4,7 @@ import keyboard
 import pygetwindow as gw  
 
 
-def run(animation):
+def run(animation) -> None:
     global x, y, frames, width, height, cur
     frames = animation.frames
     width = animation.width
@@ -80,10 +80,11 @@ def run(animation):
                     elif second_key == 'x' and copied:
                         frames[cur] = copied
                         ansi.place(1, 1, copied)
+    animation.save()
     quit()   
         
 
-def window():
+def window() -> None:
     ansi.hide()
     ansi.clear()
     new_frame()
@@ -93,13 +94,13 @@ def window():
     ansi.place(0, height + 6, "Press <ctrl + left> to go to previous frame")
 
 
-def quit():
+def quit() -> None:
     keyboard.unblock_key('enter')
     ansi.place(0, height + 6)
     ansi.show()
 
 
-def new_frame():
+def new_frame() -> None:
     global cur
     cur += 1
     frames.append("")
@@ -122,7 +123,7 @@ def index(x, y):
     return ((width + 3) * (y - 1)) + (x - 1)
 
 
-def add_character(c):
+def add_character(c) -> None:
     ansi.place(x, y, c)
     i = index(x, y)
     frames[cur] = frames[cur][:i] + c + frames[cur][i + 1:]
