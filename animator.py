@@ -1,5 +1,7 @@
 import ansi
+import time
 import keyboard
+import pygetwindow as gw  
 
 
 def run(animation):
@@ -10,9 +12,16 @@ def run(animation):
     x, y, cur = 2, 2, -1
 
     window()
-    ansi.place(x, y + 1, "^")
 
     while True:
+        keyboard.block_key('enter')
+        title = gw.getActiveWindowTitle()
+        if not title or 'ASCII_Animator' not in title:
+            keyboard.unblock_key('enter')
+            time.sleep(0.1)
+            continue
+        
+        ansi.place(x, y + 1, "^")
         event = keyboard.read_event()
         key = event.name
 
@@ -71,16 +80,12 @@ def run(animation):
                     elif second_key == 'x' and copied:
                         frames[cur] = copied
                         ansi.place(1, 1, copied)
-
-            ansi.place(x, y + 1, "^")
     quit()   
         
 
 def window():
     ansi.hide()
     ansi.clear()
-    keyboard.block_key('enter')
-    
     new_frame()
     ansi.place(0, height + 3, "Press <esc> to exit")
     ansi.place(0, height + 4, "Use <ctrl + z> and <ctrl + x> for copy-pasting frames")
