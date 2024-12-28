@@ -12,10 +12,10 @@ def run(animation) -> None:
     cur = len(frames) - 1
     x, y = 2, 2
 
-    window()
-    keyboard.block_key('enter')
+    load_window()
+    load_frame()   
+    
     blocked = True
-
     while True:
         title = gw.getActiveWindowTitle()
         if not title or 'ASCII_Animator' not in title:
@@ -37,18 +37,17 @@ def run(animation) -> None:
         right -> moves cursor right
         left -> moves cursor left
         character -> adds the character and moves cursor forward
+        shift + character -> adds alternate version of character and moves cursor forward
         space -> adds whitespace and moves cursor forward
         backspace -> moves cursor backward and adds whitespace (removes previous character)
         delete -> adds whitespace without moving cursor (removes current character)
-        shift + character -> adds alternate version of character and moves cursor forward
-        ---
+        ctrl + s -> save current progress in file
         ctrl + right -> load next frame
         ctrl + left -> load previous frame
-        ---
-        ctrl + shift + right -> copy current frame and add copied frame between current and next frame
         ctrl + n -> add new frame next to current frame
-        ctrl + d -> delete current frame data
-        ctrl + s -> save current progress in file
+        ctrl + m -> copy current frame and add copied frame next to current frame
+        ctrl + backspace -> wipes current frame
+        ctrl + d or ctrl + delete -> delete current frame data
         '''
 
         if event.event_type == keyboard.KEY_DOWN:
@@ -93,68 +92,57 @@ def run(animation) -> None:
                 second_key = second_event.name
                 if second_event.event_type == keyboard.KEY_DOWN:
 
-                    if second_key == 'right':
-                        if cur >= len(frames) - 1:
-                            new_frame()
-                        else:
-                            cur += 1
-                            current_frame()
+                    if second_key in ['s', 'S']:
+                        animation.frames = frames
+                        animation.save()
+
+                    elif second_key == 'right' and cur < len(frames) - 1:
+                        cur += 1
+                        load_frame()
                     elif second_key == 'left' and cur > 0:
                         cur -= 1
-                        current_frame()
+                        load_frame()
             
-                    elif second_key == 'z':
-                        global copied
+                    elif second_key in ['n', 'N']:
+                        cur += 1
+                        frames = frames[:cur] + [animation.clean_frame()] + frames[cur:]
+                        load_frame()
+                    elif second_key in ['m', 'M']:
                         copied = frames[cur]
-                    elif second_key == 'x' and copied:
-                        frames[cur] = copied
-                        ansi.place(1, 1, copied)
+                        cur += 1
+                        frames = frames[:cur] + [copied] + frames[cur:]
+                        load_frame()
+
+                    elif second_key == 'backspace':
+                        frames[cur] = animation.clean_frame()
+                        load_frame()
+                    elif second_key in ['d', 'D', 'delete']:
+                        frames = frames[:cur] + frames[cur + 1:]
+                        cur -= 1
+                        load_frame()
 
                 block_controls(False)
+    animation.frames = frames
     animation.save()
     quit()   
         
 
-def window() -> None:
+def load_window() -> None:
+    keyboard.block_key('enter')
     ansi.hide()
     ansi.clear()
-
-    if cur == -1:
-        new_frame()
-    else:
-        current_frame()
-
     ansi.place(0, height + 3, "Press <esc> to exit")
     ansi.place(0, height + 4, "Use <ctrl + z> and <ctrl + x> for copy-pasting frames")
     ansi.place(0, height + 5, "Press <ctrl + right> to go to next frame, <ctrl + left> to go to previous frame")
 
 
 def quit() -> None:
-    keyboard.unblock_key('enter')
     ansi.place(0, height + 6)
     ansi.show()
+    keyboard.unblock_key('enter')
 
 
-def new_frame() -> None:
-    global cur
-    cur += 1
-    frames.append("")
-
-    top_bottom = f"+{'-' * width}+"
-    ansi.place(1, 1, top_bottom)
-    frames[cur] += top_bottom + "\n"
-
-    middle = "|" + (" " * width) + "|"
-    for i in range(2, height + 2):
-        ansi.place(1, i, middle)
-        frames[cur] += middle + "\n"
-
-    ansi.place(1, height + 2, top_bottom)
-    frames[cur] += top_bottom + "\n"
-    ansi.place(0, height + 6, f"Current Frame: {cur + 1:4}")
-
-
-def current_frame() -> None:
+def load_frame() -> None:
     ansi.place(1, 1, frames[cur])
     ansi.place(0, height + 6, f"Current Frame: {cur + 1:4}")
 
@@ -171,7 +159,7 @@ def add_character(c) -> None:
 
 
 def block_controls(flag):
-    keys = ["c", "C", "x", "X", "v", "V", "z", "Z", "y", "Y", "f", "F", "t", "T", "w", "W"]
+    keys = ['c', 'C', 'x', 'X', 'v', 'V', 'z', 'Z', 'y', 'Y', 'f', 'F', 't', 'T', 'w', 'W', '`', '~', 'shift', 'tab']
     if flag:
         for key in keys:
             keyboard.block_key(key)

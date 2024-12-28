@@ -2,21 +2,26 @@ from animation import Animation
 import animator
 import ansi
 import os
+import sys
 
-LOGO = '''
+
+def header() -> None:
+    ansi.clear()
+    logo = '''
  █████╗ ███████╗ ██████╗██╗██╗    █████╗ ███╗   ██╗██╗███╗   ███╗ █████╗ ████████╗ ██████╗ ██████╗ 
 ██╔══██╗██╔════╝██╔════╝██║██║   ██╔══██╗████╗  ██║██║████╗ ████║██╔══██╗╚══██╔══╝██╔═══██╗██╔══██╗
 ███████║███████╗██║     ██║██║   ███████║██╔██╗ ██║██║██╔████╔██║███████║   ██║   ██║   ██║██████╔╝
 ██╔══██║╚════██║██║     ██║██║   ██╔══██║██║╚██╗██║██║██║╚██╔╝██║██╔══██║   ██║   ██║   ██║██╔══██╗
 ██║  ██║███████║╚██████╗██║██║   ██║  ██║██║ ╚████║██║██║ ╚═╝ ██║██║  ██║   ██║   ╚██████╔╝██║  ██║
 ╚═╝  ╚═╝╚══════╝ ╚═════╝╚═╝╚═╝   ╚═╝  ╚═╝╚═╝  ╚═══╝╚═╝╚═╝     ╚═╝╚═╝  ╚═╝   ╚═╝    ╚═════╝ ╚═╝  ╚═╝
+Make cool ascii animations!
 '''
+    ansi.place(1, 1, logo)
 
 
 def main_menu() -> None:
-    ansi.clear()
-    ansi.place(1, 1, LOGO)
-    print("Create a new project | Load an existing project | Play animation from saved projects\n")
+    header()
+    print("Create a new project | Load an existing project | Play animation from saved projects")
 
     ans = input("New Project? (y/N) ").strip().lower()
     yes = ['yes', 'y']
@@ -35,6 +40,9 @@ def main_menu() -> None:
 
 
 def new_project() -> None:
+    header()
+    print("Create a new project")
+
     while True:
         try:    
             name = input("Enter Project Name: ")
@@ -53,12 +61,18 @@ def new_project() -> None:
 
 
 def load_project() -> None:
+    header()
+    print("Load an existing project")
+
     if project := get_project():
         movie = Animation.load(project)
         animator.run(movie)
 
 
 def play_animation() -> None:
+    header()
+    print("Play animation from saved projects")
+
     if project := get_project():
         movie = Animation.load(project)
         try:
@@ -85,4 +99,12 @@ def get_project():
 
 
 if __name__ == "__main__":
-    main_menu()
+    argc = len(sys.argv)
+    if argc == 1:
+        main_menu()
+    elif argc == 2 and sys.argv[1].strip().lower() in ['n', '-n', 'new', '-new']:
+        new_project()
+    elif argc == 2 and sys.argv[1].strip().lower() in ['l', '-l', 'load', '-load']:
+        load_project()
+    elif argc == 2 and sys.argv[1].strip().lower() in ['p', '-p', 'play', '-play']:
+        play_animation()
