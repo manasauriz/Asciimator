@@ -13,14 +13,19 @@ def run(animation) -> None:
     x, y = 2, 2
 
     window()
+    keyboard.block_key('enter')
+    blocked = True
 
     while True:
-        keyboard.block_key('enter')
         title = gw.getActiveWindowTitle()
         if not title or 'ASCII_Animator' not in title:
-            keyboard.unblock_key('enter')
-            time.sleep(0.1)
+            if blocked:
+                keyboard.unblock_key('enter')
+                blocked = False
+            time.sleep(0.25)
             continue
+        if not blocked:
+            keyboard.block_key('enter')
         
         ansi.place(x, y + 1, "^")
         event = keyboard.read_event()

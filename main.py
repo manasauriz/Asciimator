@@ -46,29 +46,42 @@ def new_project() -> None:
         except ValueError:
             print("Error: Enter a valid name and number!")
 
+    if name.endswith(".txt"):
+        name = name[:-4]
     movie = Animation(name.strip().lower(), width, height)
     animator.run(movie)
 
 
-def load_project():
-    all_files = {}
+def load_project() -> None:
+    if project := get_project():
+        movie = Animation.load(project)
+        animator.run(movie)
+
+
+def play_animation() -> None:
+    if project := get_project():
+        movie = Animation.load(project)
+        try:
+            frame_rate = int(input("Enter Frame Rate: "))
+        except ValueError:
+            pass
+        else:
+            movie.play(frame_rate)
+
+
+def get_project():
+    all_files = []
     i = 1
     for file in os.listdir("./projects"):
         if file.endswith(".txt"):
             print(f"{i}. {file.capitalize()[:-4]}")
-            all_files[i] = file
+            all_files.append(file)
             i += 1
 
     file_name = input("Enter File Name: ").strip().lower()
     if not file_name.endswith(".txt"):
         file_name += ".txt"
-    if file_name in all_files.values():
-        movie = Animation.load(file_name)
-        animator.run(movie)
-
-
-def play_animation():
-    ...
+    return file_name if file_name in all_files else None
 
 
 if __name__ == "__main__":

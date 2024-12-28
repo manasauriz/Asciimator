@@ -1,3 +1,6 @@
+import ansi
+import time
+
 class Animation:
     def __init__(self, name, width, height):
         self.name = name
@@ -30,5 +33,16 @@ class Animation:
                     frame = line
                     cur = 1
             animation.frames.append(frame)
-
             return animation
+        
+    def play(self, frame_rate):
+        ansi.hide()
+        ansi.clear()
+        ansi.place(1, 1, f"{self.name.capitalize()} - Animation ({frame_rate} FPS)")
+
+        for frame in self.frames:
+            ansi.place(1, 3, frame)
+            time.sleep(1 / frame_rate)
+        
+        ansi.place(1, self.height + 4)
+        ansi.show()
