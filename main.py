@@ -18,7 +18,7 @@ def main_menu() -> None:
     ansi.place(1, 1, LOGO)
     print("Create a new project | Load an existing project | Play animation from saved projects\n")
 
-    ans = input("Create Project? (y/N) ").strip().lower()
+    ans = input("New Project? (y/N) ").strip().lower()
     yes = ['yes', 'y']
     no = ['no', 'n']
 

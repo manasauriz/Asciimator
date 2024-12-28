@@ -30,6 +30,26 @@ def run(animation) -> None:
         ansi.place(x, y + 1, "^")
         event = keyboard.read_event()
         key = event.name
+        '''
+        esc -> save and quit program
+        up -> moves cursor up
+        down -> moves cursor down
+        right -> moves cursor right
+        left -> moves cursor left
+        character -> adds the character and moves cursor forward
+        space -> adds whitespace and moves cursor forward
+        backspace -> moves cursor backward and adds whitespace (removes previous character)
+        delete -> adds whitespace without moving cursor (removes current character)
+        shift + character -> adds alternate version of character and moves cursor forward
+        ---
+        ctrl + right -> load next frame
+        ctrl + left -> load previous frame
+        ---
+        ctrl + shift + right -> copy current frame and add copied frame between current and next frame
+        ctrl + n -> add new frame next to current frame
+        ctrl + d -> delete current frame data
+        ctrl + s -> save current progress in file
+        '''
 
         if event.event_type == keyboard.KEY_DOWN:
             ansi.place(x, y + 1, frames[cur][index(x, y + 1)])
@@ -50,14 +70,6 @@ def run(animation) -> None:
                 add_character(key)
                 if x < width + 1:
                     x += 1
-
-            elif key == 'space' or key == 'backspace' or key == 'delete':
-                add_character(" ")
-                if key == 'space' and x < width + 1:
-                    x += 1
-                if key == 'backspace' and x > 2:
-                    x -= 1
-                    
             elif key == 'shift':
                 second_event = keyboard.read_event()
                 second_key = second_event.name
@@ -66,10 +78,21 @@ def run(animation) -> None:
                     if x < width + 1:
                         x += 1
 
+            elif key == 'space' and x < width + 1:
+                add_character(" ")
+                x += 1
+            elif key == 'backspace' and x > 2:
+                x -= 1
+                add_character(" ")
+            elif key == 'delete':
+                add_character(" ")
+
             elif key == 'ctrl':
+                block_controls(True)
                 second_event = keyboard.read_event()
                 second_key = second_event.name
                 if second_event.event_type == keyboard.KEY_DOWN:
+
                     if second_key == 'right':
                         if cur >= len(frames) - 1:
                             new_frame()
@@ -86,6 +109,8 @@ def run(animation) -> None:
                     elif second_key == 'x' and copied:
                         frames[cur] = copied
                         ansi.place(1, 1, copied)
+
+                block_controls(False)
     animation.save()
     quit()   
         
@@ -126,12 +151,12 @@ def new_frame() -> None:
 
     ansi.place(1, height + 2, top_bottom)
     frames[cur] += top_bottom + "\n"
-    ansi.place(0, height + 6, f"Current Frame: {cur + 1}")
+    ansi.place(0, height + 6, f"Current Frame: {cur + 1:4}")
 
 
 def current_frame() -> None:
     ansi.place(1, 1, frames[cur])
-    ansi.place(0, height + 6, f"Current Frame: {cur + 1}")
+    ansi.place(0, height + 6, f"Current Frame: {cur + 1:4}")
 
 
 def index(x, y):
@@ -143,3 +168,13 @@ def add_character(c) -> None:
     ansi.place(x, y, c)
     i = index(x, y)
     frames[cur] = frames[cur][:i] + c + frames[cur][i + 1:]
+
+
+def block_controls(flag):
+    keys = ["c", "C", "x", "X", "v", "V", "z", "Z", "y", "Y", "f", "F", "t", "T", "w", "W"]
+    if flag:
+        for key in keys:
+            keyboard.block_key(key)
+    else:
+        for key in keys:
+            keyboard.unblock_key(key)
