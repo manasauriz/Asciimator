@@ -1,7 +1,8 @@
 import ansi
 import time
 import keyboard
-import pygetwindow as gw  
+import pygetwindow as gw
+import pyperclip as clip
 
 
 def run(animation) -> None:
@@ -12,8 +13,7 @@ def run(animation) -> None:
     cur = len(frames) - 1
     x, y = 2, 2
 
-    load_window()
-    load_frame()   
+    load_window()   
     
     blocked = True
     while True:
@@ -39,9 +39,11 @@ def run(animation) -> None:
         character -> adds the character and moves cursor forward
         shift + character -> adds alternate version of character and moves cursor forward
         space -> adds whitespace and moves cursor forward
-        backspace -> moves cursor backward and adds whitespace (removes previous character)
-        delete -> adds whitespace without moving cursor (removes current character)
+        backspace -> adds whitespace and moves cursor backward
+        delete -> adds whitespace without moving cursor
         ctrl + s -> save current progress in file
+        ctrl + a -> animate current progress
+        ctrl + p -> paste copied character from clipboard
         ctrl + right -> load next frame
         ctrl + left -> load previous frame
         ctrl + n -> add new frame next to current frame
@@ -77,12 +79,14 @@ def run(animation) -> None:
                     if x < width + 1:
                         x += 1
 
-            elif key == 'space' and x < width + 1:
+            elif key == 'space':
                 add_character(" ")
-                x += 1
-            elif key == 'backspace' and x > 2:
-                x -= 1
+                if x < width + 1:
+                    x += 1
+            elif key == 'backspace':
                 add_character(" ")
+                if x > 2:
+                    x -= 1
             elif key == 'delete':
                 add_character(" ")
 
@@ -95,6 +99,18 @@ def run(animation) -> None:
                     if second_key in ['s', 'S']:
                         animation.frames = frames
                         animation.save()
+                    elif second_key in ['a', 'A']:
+                        animation.frames = frames
+                        animation.play(3)
+                        load_window()
+                    elif second_key in ['p', 'P']:
+                        text = clip.paste()
+                        for c in text:
+                            add_character(c)
+                            if x < width + 1:
+                                x += 1
+                            else:
+                                break
 
                     elif second_key == 'right' and cur < len(frames) - 1:
                         cur += 1
@@ -131,6 +147,7 @@ def load_window() -> None:
     keyboard.block_key('enter')
     ansi.hide()
     ansi.clear()
+    load_frame()
     ansi.place(0, height + 3, "Press <esc> to exit")
     ansi.place(0, height + 4, "Use <ctrl + z> and <ctrl + x> for copy-pasting frames")
     ansi.place(0, height + 5, "Press <ctrl + right> to go to next frame, <ctrl + left> to go to previous frame")
@@ -159,7 +176,9 @@ def add_character(c) -> None:
 
 
 def block_controls(flag):
-    keys = ['c', 'C', 'x', 'X', 'v', 'V', 'z', 'Z', 'y', 'Y', 'f', 'F', 't', 'T', 'w', 'W', '`', '~', 'shift', 'tab']
+    keys = ['c', 'C', 'x', 'X', 'v', 'V', 'z', 'Z', 'y', 'Y', 
+            'f', 'F', 't', 'T', 'w', 'W', '`', '~', 
+            'shift', 'tab']
     if flag:
         for key in keys:
             keyboard.block_key(key)

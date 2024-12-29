@@ -24,10 +24,10 @@ class Animation:
     def play(self, frame_rate):
         ansi.hide()
         ansi.clear()
-        ansi.place(1, 1, f"{self.name.capitalize()} - Animation ({frame_rate} FPS)")
+        # ansi.place(1, 1, f"{self.name.capitalize()} - Animation ({frame_rate} FPS)")
 
         for frame in self.frames:
-            ansi.place(1, 3, frame)
+            ansi.place(1, 1, frame)
             time.sleep(1 / frame_rate)
         
         ansi.place(1, self.height + 4)
