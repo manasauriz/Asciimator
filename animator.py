@@ -31,6 +31,7 @@ def run(animation) -> None:
         event = keyboard.read_event()
         key = event.name
         '''
+        CONTROLS
         esc -> save and quit program
         up -> moves cursor up
         down -> moves cursor down

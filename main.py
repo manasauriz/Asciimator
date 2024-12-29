@@ -21,7 +21,7 @@ Make cool ascii animations!
 
 def main_menu() -> None:
     header()
-    print("Create a new project | Load an existing project | Play animation from saved projects")
+    print("Create a new project | Load an existing project | Play animation from saved projects | Delete a project")
 
     ans = input("New Project? (y/N) ").strip().lower()
     yes = ['yes', 'y']
@@ -37,6 +37,12 @@ def main_menu() -> None:
             ans = input("Play Animation? (y/N) ").strip().lower()
             if ans in yes:
                 play_animation()
+            elif ans in no:
+                ans = input("Delete Project? (y/N) ").strip().lower()
+                if ans in yes:
+                    delete_project()
+                elif ans in no:
+                    ...
 
 
 def new_project() -> None:
@@ -83,14 +89,22 @@ def play_animation() -> None:
             movie.play(frame_rate)
 
 
+def delete_project() -> None:
+    header()
+    print("Delete a project")
+
+    if project := get_project():
+        if os.path.exists(f"./projects/{project}"):
+            os.remove(f"./projects/{project}")
+            print(f"{project.capitalize()} deleted successfully!")
+
+
 def get_project():
     all_files = []
-    i = 1
     for file in os.listdir("./projects"):
         if file.endswith(".txt"):
-            print(f"{i}. {file.capitalize()[:-4]}")
+            print(f"--> {file.capitalize()[:-4]}")
             all_files.append(file)
-            i += 1
 
     file_name = input("Enter File Name: ").strip().lower()
     if not file_name.endswith(".txt"):
@@ -108,3 +122,5 @@ if __name__ == "__main__":
         load_project()
     elif argc == 2 and sys.argv[1].strip().lower() in ['p', '-p', 'play', '-play']:
         play_animation()
+    elif argc == 2 and sys.argv[1].strip().lower() in ['d', '-d', 'del', '-del', 'delete', '-delete']:
+        delete_project()
