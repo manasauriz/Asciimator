@@ -16,7 +16,8 @@ class Animation:
         return frame
 
     def save(self):
-        with open(f"./projects/{self.name}.txt", 'w') as file:
+        file_name = "_".join(self.name.lower().split(" ")) + ".txt"
+        with open(f"./projects/{file_name}", 'w') as file:
             file.write(f"{self.name}\n{self.width}\n{self.height}\n")
             for frame in self.frames:
                 file.write(frame)
@@ -24,12 +25,14 @@ class Animation:
     def play(self, frame_rate):
         ansi.hide()
         ansi.clear()
-        # ansi.place(1, 1, f"{self.name.capitalize()} - Animation ({frame_rate} FPS)")
+        fname = self.name if len(self.name) <= 10 else self.name[:7] + "..."
+        ansi.place(1, self.height + 3, f"{fname:10} ({frame_rate} FPS)")
 
         for frame in self.frames:
             ansi.place(1, 1, frame)
             time.sleep(1 / frame_rate)
         
+        fname = self.name if len(self.name) <= 10 else self.name[:7] + "..."
         ansi.place(1, self.height + 4)
         ansi.show()
 
