@@ -53,8 +53,8 @@ def new_project() -> None:
 
     while True:
         name = input("Enter Project Name: ")
-        if not name or name == "":
-            print("Error: Invalid name! Try again")
+        if not name.isalnum():
+            print("Error: Invalid name! Use letters and numbers only")
             continue
         try:    
             width = int(input("Enter Frame Width: "))
@@ -66,6 +66,7 @@ def new_project() -> None:
             continue
         if width > WIN_WIDTH - 5 or height > WIN_HEIGHT - 10:
             print(f"Error: Width cannot be more than {WIN_WIDTH - 5} and Height cannot be more than {WIN_HEIGHT - 10}")
+            print("Enter different dimensions or resiz the window and try again")
             continue
         break
 
@@ -77,10 +78,10 @@ def load_project() -> None:
     header()
     print("Load an existing project")
 
-    if file_name := get_project():
-        movie = Animation.load(file_name)
+    if file_path := get_project():
+        movie = Animation.load(file_path)
         if movie.width > WIN_WIDTH - 5 or movie.height > WIN_HEIGHT - 10:
-            print(f"Error: {movie.name} cannot be opened in this window\nResize the terminal and try again.")
+            print(f"Error: {movie.name} cannot be opened in this window\Increase terminal size and try again.")
         else:
             animator.run(movie)
 
@@ -89,11 +90,11 @@ def play_animation() -> None:
     header()
     print("Play animation from saved projects")
 
-    if file_name := get_project():
-        movie = Animation.load(file_name)
+    if file_path := get_project():
+        movie = Animation.load(file_path)
         
         if movie.width > WIN_WIDTH - 5 or movie.height > WIN_HEIGHT - 5:
-            print(f"Error: {movie.name} cannot be played in this window\nResize the terminal and try again.")
+            print(f"Error: {movie.name} cannot be played in this window\Increase terminal size and try again.")
         else:
             while True:
                 try:
@@ -111,23 +112,41 @@ def delete_project() -> None:
     header()
     print("Delete a project")
 
-    if file_name := get_project():
-        if os.path.exists(f"./projects/{file_name}"):
-            os.remove(f"./projects/{file_name}")
-            print(f"{file_name} deleted successfully!")
+    if file_path := get_project():
+        os.remove(file_path)
+        print(f"File deleted successfully!")
+        main_menu()
 
 
 def get_project():
-    all_files = []
-    for file in os.listdir("./projects"):
-        if file.endswith(".txt"):
-            print(f"--> {" ".join(file[:-4].split("_")).capitalize()}")
-            all_files.append(file)
+    all_files = get_all_files()
+    for i, file in enumerate(all_files, start=1):
+        print(f"Enter {i:2} to select --> {" ".join(file[:-5].split("_")).title()}")
 
-    file_name = "_".join(input("Enter File Name: ").strip().lower().split(" "))
-    if not file_name.endswith(".txt"):
-        file_name += ".txt"
-    return file_name if file_name in all_files else print("Error: Invalid file")
+    while True:
+        try:
+            file_number = int(input("Enter number: "))
+            if file_number <= 0 or file_number > len(all_files):
+                raise ValueError
+        except ValueError:
+            print("Error: Enter a valid number!")
+            continue
+        break
+
+    current_dir = os.path.dirname(os.path.abspath(__file__))
+    file_path = os.path.join(current_dir, "projects", all_files[file_number - 1])
+    return file_path
+
+
+def get_all_files():
+    all_files = []
+    current_dir = os.path.dirname(os.path.abspath(__file__))
+    projects_dir = os.path.join(current_dir, "projects")
+
+    for file in os.listdir(projects_dir):
+        if file.endswith(".json"):
+            all_files.append(file)
+    return all_files
 
 
 def get_dimension(dimension, limit):

@@ -6,8 +6,8 @@ import pyperclip as clip
 
 
 CONTROLS = '''_____CONTROLS: Press ESC to quit & use ARROW KEYS to move_____
-TAB + S -- save animation  |TAB + N -- add new frame beside current 
-TAB + P -- play animation  |TAB + C -- add a copy of current frame  
+TAB + S -- save animation  |TAB + N -- add new frame next to current frame
+TAB + P -- play animation  |TAB + M -- add a copy of current frame next to it  
 TAB + > -- load next frame |TAB + BACKSPACE   -- wipes current frame
 TAB + < -- load prev frame |TAB + DELETE or D -- delete current frame
 '''
@@ -137,7 +137,7 @@ def run(animation) -> None:
                             cur += 1
                             frames = frames[:cur] + [animation.clean_frame()] + frames[cur:]
                             load_frame()
-                        elif second_key in ['c', 'C']:
+                        elif second_key in ['m', 'M']:
                             copied = frames[cur]
                             cur += 1
                             frames = frames[:cur] + [copied] + frames[cur:]
@@ -196,6 +196,7 @@ def block_controls(flag):
 
 
 def get_frame_rate():
+    ansi.show()
     keyboard.unblock_key('enter')
     keyboard.press_and_release('enter')
     while True:
@@ -206,4 +207,5 @@ def get_frame_rate():
         except ValueError:
             pass
     keyboard.block_key('enter')
+    ansi.hide()
     return frame_rate
