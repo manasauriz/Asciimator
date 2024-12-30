@@ -35,7 +35,7 @@ class Animation:
     def play(self, frame_rate):
         ansi.hide()
         ansi.clear()
-        ansi.place(1, self.height + 3, f"{self.name} @ {frame_rate} FPS")
+        ansi.place(1, self.height + 3, f"\033[33m{self.name} @ {frame_rate} FPS\033[0m")
 
         for frame in self.frames:
             ansi.place(1, 1, frame)

@@ -5,11 +5,11 @@ import pygetwindow as gw
 import pyperclip as clip
 
 
-CONTROLS = '''_____CONTROLS: Press ESC to quit & use ARROW KEYS to move_____
-TAB + S -- save animation  |TAB + N -- add new frame next to current frame
-TAB + P -- play animation  |TAB + M -- add a copy of current frame next to it  
-TAB + > -- load next frame |TAB + BACKSPACE   -- wipes current frame
-TAB + < -- load prev frame |TAB + DELETE or D -- delete current frame
+CONTROLS = '''\033[92m_____CONTROLS: Press ESC to quit & use ARROW KEYS to move_____\033[0m
+\033[33mTAB + S\033[0m -- save animation  |\033[33mTAB + N\033[0m -- add new frame next to current frame
+\033[33mTAB + P\033[0m -- play animation  |\033[33mTAB + M\033[0m -- add a copy of current frame next to it  
+\033[33mTAB + >\033[0m -- load next frame |\033[33mTAB + BACKSPACE\033[0m   -- wipes current frame
+\033[33mTAB + <\033[0m -- load prev frame |\033[33mTAB + DELETE or D\033[0m -- delete current frame
 '''
 '''
 esc -> save and quit program
@@ -163,7 +163,7 @@ def run(animation) -> None:
 def load_frame() -> None:
     ansi.place(1, 1, frames[cur])
     fname = name if len(name) <= 10 else name[:7] + "..."
-    frame_info = f"CURRENT FRAME:{cur + 1:4} |TOTAL FRAMES:{len(frames):4} |{fname:10} ({width} X {height})"
+    frame_info = f"\033[33mCURRENT FRAME:{cur + 1:4} |TOTAL FRAMES:{len(frames):4} |{fname:10} ({width} X {height})\033[0m"
     ansi.place(1, height + 3, frame_info)
 
 
