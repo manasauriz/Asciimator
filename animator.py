@@ -162,8 +162,8 @@ def run(animation) -> None:
 
 def load_frame() -> None:
     ansi.place(1, 1, frames[cur])
-    fname = name if len(name) <= 10 else name[:7] + "..."
-    frame_info = f"\033[33mCURRENT FRAME:{cur + 1:4} |TOTAL FRAMES:{len(frames):4} |{fname:10} ({width} X {height})\033[0m"
+    fname = name if len(name) <= 20 else name[:17] + "..."
+    frame_info = f"\033[33mCURRENT FRAME:\033[0m{cur + 1:4} |\033[33mTOTAL FRAMES:\033[0m{len(frames):4} |\033[33m{fname:20}\033[0m ({width} X {height})"
     ansi.place(1, height + 3, frame_info)
 
 

@@ -4,6 +4,8 @@ import ansi
 import os
 import sys
 import keyboard
+import argparse
+import re
 
 
 def header() -> None:
@@ -19,6 +21,33 @@ Make cool ascii animations!
 '''
     ansi.place(1, 1, logo)
     print(f"Current Window Width:{WIN_WIDTH:4} |Current Window Height: {WIN_HEIGHT:4}")
+
+
+def main() -> None:
+
+    parser = argparse.ArgumentParser(description="ASCII Animator Command Line Interface")
+    group = parser.add_mutually_exclusive_group()
+    group.add_argument('-n', '--new', action='store_true', help="Start a new project")
+    group.add_argument('-l', '--load', action='store_true', help="Load an existing project")
+    group.add_argument('-p', '--play', action='store_true', help="Play an animation")
+    group.add_argument('-d', '--delete', action='store_true', help="Delete a project")
+
+    args = parser.parse_args()
+    os.system("")
+    global WIN_WIDTH, WIN_HEIGHT
+    WIN_WIDTH = get_dimension("width", 500)
+    WIN_HEIGHT = get_dimension("height", 100)
+
+    if args.new:
+        new_project()
+    elif args.load:
+        load_project()
+    elif args.play:
+        play_animation()
+    elif args.delete:
+        delete_project()
+    else:
+        main_menu()
 
 
 def main_menu() -> None:
@@ -53,20 +82,34 @@ def new_project() -> None:
 
     while True:
         name = input("Enter Project Name: ")
-        if not name.isalnum():
-            print("Error: Invalid name! Use letters and numbers only")
-            continue
+        if re.search(r"^[ 0-9a-zA-Z_\-]+$", name):
+            break
+        print(">> Error: Invalid name!")
+        print(">> Name must contain [a-z], [A-Z], [0-9], '-', '_' or <space>")
+    while True:
         try:    
             width = int(input("Enter Frame Width: "))
-            height = int(input("Enter Frame Height: "))
-            if width <= 0 or height <= 0:
+            if width <= 0:
                 raise ValueError
         except ValueError:
-            print("Error: Enter a valid positve number")
+            print(">> Error: Enter a valid positve number")
             continue
-        if width > WIN_WIDTH - 5 or height > WIN_HEIGHT - 10:
-            print(f"Error: Width cannot be more than {WIN_WIDTH - 5} and Height cannot be more than {WIN_HEIGHT - 10}")
-            print("Enter different dimensions or resiz the window and try again")
+        if width > WIN_WIDTH - 5:
+            print(f">> Error: Width cannot be more than {WIN_WIDTH - 5}")
+            print(">> Enter different dimensions or resize the window and try again")
+            continue
+        break
+    while True:
+        try:    
+            height = int(input("Enter Frame Height: "))
+            if height <= 0:
+                raise ValueError
+        except ValueError:
+            print(">> Error: Enter a valid positve number")
+            continue
+        if height > WIN_HEIGHT - 10:
+            print(f">> Error: Height cannot be more than {WIN_HEIGHT - 10}")
+            print(">> Enter different dimensions or resize the window and try again")
             continue
         break
 
@@ -81,7 +124,8 @@ def load_project() -> None:
     if file_path := get_project():
         movie = Animation.load(file_path)
         if movie.width > WIN_WIDTH - 5 or movie.height > WIN_HEIGHT - 10:
-            print(f"Error: {movie.name} cannot be opened in this window\Increase terminal size and try again.")
+            print(f">> Error: {movie.name} cannot be opened in this window")
+            print(">> Increase terminal size and try again")
         else:
             animator.run(movie)
 
@@ -94,7 +138,8 @@ def play_animation() -> None:
         movie = Animation.load(file_path)
         
         if movie.width > WIN_WIDTH - 5 or movie.height > WIN_HEIGHT - 5:
-            print(f"Error: {movie.name} cannot be played in this window\Increase terminal size and try again.")
+            print(f">> Error: {movie.name} cannot be played in this window")
+            print(">> Increase terminal size and try again")
         else:
             while True:
                 try:
@@ -102,7 +147,7 @@ def play_animation() -> None:
                     if frame_rate <= 0:
                         raise ValueError
                 except ValueError:
-                    print("Error: Enter a valid positive number!")
+                    print(">> Error: Enter a valid positive number!")
                     continue
                 break
             movie.play(frame_rate)
@@ -114,8 +159,10 @@ def delete_project() -> None:
 
     if file_path := get_project():
         os.remove(file_path)
-        print(f"File deleted successfully!")
+        print(">> File deleted successfully!")
         main_menu()
+    else:
+        print(">> Error: Cannot delete file")
 
 
 def get_project():
@@ -129,7 +176,7 @@ def get_project():
             if file_number <= 0 or file_number > len(all_files):
                 raise ValueError
         except ValueError:
-            print("Error: Enter a valid number!")
+            print(f">> Error: Enter a valid number from 1 to {len(all_files)}")
             continue
         break
 
@@ -178,21 +225,4 @@ def get_dimension(dimension, limit):
 
 
 if __name__ == "__main__":
-    os.system("")
-    global WIN_WIDTH, WIN_HEIGHT
-    WIN_WIDTH = get_dimension("width", 500)
-    WIN_HEIGHT = get_dimension("height", 100)
-
-    argc = len(sys.argv)
-    if argc == 1:
-        main_menu()
-    elif argc == 2:
-        cmd = sys.argv[1].strip().lower()
-        if cmd in ['n', '-n', 'new', '-new']:
-            new_project()
-        elif cmd in ['l', '-l', 'load', '-load']:
-            load_project()
-        elif cmd in ['p', '-p', 'play', '-play']:
-            play_animation()
-        elif cmd in ['d', '-d', 'del', '-del', 'delete', '-delete']:
-            delete_project()
+    main()
