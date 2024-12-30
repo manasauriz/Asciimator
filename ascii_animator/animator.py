@@ -37,7 +37,6 @@ def run(animation) -> None:
         tab + backspace -> wipes current frame
         tab + d or delete -> delete current frame data
     """
-
     global name, width, height, frames, cur, x, y
     name = animation.name
     width = animation.width
@@ -165,7 +164,6 @@ def run(animation) -> None:
 
 def load_frame() -> None:
     """Display current frame and info related to it"""
-
     ansi.place(1, 1, frames[cur])
     fname = name if len(name) <= 20 else name[:17] + "..."
     frame_info = f"\033[33mCURRENT FRAME:\033[0m{cur + 1:4} |\033[33mTOTAL FRAMES:\033[0m{len(frames):4} |\033[33m{fname:20}\033[0m ({width} X {height})"
@@ -174,7 +172,6 @@ def load_frame() -> None:
 
 def load_window() -> None:
     """Initialize window on screen and display frame and controls"""
-
     ansi.hide()
     ansi.clear()
     load_frame()
@@ -192,7 +189,6 @@ def index(x, y):
     Returns:
         int: index in frame string
     """
-
     return ((width + 3) * (y - 1)) + (x - 1)
 
 
@@ -203,7 +199,6 @@ def add_character(c) -> None:
     Args:
         c(str): character string to be added
     """
-    
     ansi.place(x, y, c)
     i = index(x, y)
     frames[cur] = frames[cur][:i] + c + frames[cur][i + 1:]
@@ -216,7 +211,6 @@ def block_controls(flag) -> None:
     Args:
         flag(bool): True indicates block, False indicates unblock
     """
-
     keys = ['enter']
     if flag:
         for key in keys:
@@ -231,9 +225,8 @@ def get_frame_rate():
     Clear display and get frame rate from user to play animation
 
     Returns:
-        int: frame rate
+        int: frame rate for animation
     """
-
     ansi.show()
     keyboard.unblock_key('enter')
     keyboard.press_and_release('enter')

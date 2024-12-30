@@ -12,7 +12,6 @@ import argparse
 
 def header() -> None:
     """Header logo to be added at the beginning of each menu"""
-
     ansi.clear()
     logo = f'''
  █████╗ ███████╗ ██████╗██╗██╗    █████╗ ███╗   ██╗██╗███╗   ███╗ █████╗ ████████╗ ██████╗ ██████╗ 
@@ -66,7 +65,6 @@ def main() -> None:
 
 def main_menu() -> None:
     """Main menu that gives access to all functionalities"""
-
     header()
     print("\033[92mCreate new project |Load existing project |Play animation from saved projects |Delete a project\033[0m")
 
@@ -92,7 +90,6 @@ def main_menu() -> None:
 
 def new_project() -> None:
     """Validates name, width and height to create and run a new project using animator"""
-
     header()
     print("\033[92mCreate a new project\033[0m")
 
@@ -137,7 +134,6 @@ def new_project() -> None:
 
 def load_project() -> None:
     """Validates width and height to load and run an existing project using animator"""
-
     header()
     print("\033[92mLoad an existing project\033[0m")
 
@@ -152,7 +148,6 @@ def load_project() -> None:
 
 def play_animation() -> None:
     """Validates width, height and frame rate to load and play animation for a project"""
-
     header()
     print("\033[92mPlay animation from saved projects\033[0m")
 
@@ -177,7 +172,6 @@ def play_animation() -> None:
 
 def delete_project() -> None:
     """Deletes an exisitng project"""
-
     header()
     print("\033[92mDelete a project\033[0m")
 
@@ -196,10 +190,9 @@ def get_project():
     Returns:
         str: absolute path to a project file
     """
-
     all_files = get_all_files()
     for i, file in enumerate(all_files, start=1):
-        print(f"Enter {i:2} to select --> {" ".join(file[:-5].split("_")).title()}")
+        print(f"Enter {i:2} to select --> {" ".join(file[:-5].split("_")).title()}") # Display an appropriate project name
 
     while True:
         try:
@@ -223,7 +216,6 @@ def get_all_files():
     Returns:
         list: file names of of all projects
     """
-
     all_files = []
     current_dir = os.path.dirname(os.path.abspath(__file__)) # Get absolute path to directory running this file
     projects_dir = os.path.join(current_dir, "projects")
@@ -245,7 +237,6 @@ def get_dimension(dimension, limit):
     Returns:
         int: width (represented by column) or height (represented by row) or return value of a recursive functional call
     """
-
     if dimension == "width":
         ansi.place(limit, 1, end="") # Place cursor horizontally at a high number
     elif dimension == "height":
