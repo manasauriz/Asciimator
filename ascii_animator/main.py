@@ -11,6 +11,8 @@ import argparse
 
 
 def header() -> None:
+    """Header logo to be added at the beginning of each menu"""
+
     ansi.clear()
     logo = f'''
  █████╗ ███████╗ ██████╗██╗██╗    █████╗ ███╗   ██╗██╗███╗   ███╗ █████╗ ████████╗ ██████╗ ██████╗ 
@@ -19,13 +21,15 @@ def header() -> None:
 ██╔══██║╚════██║██║     ██║██║   ██╔══██║██║╚██╗██║██║██║╚██╔╝██║██╔══██║   ██║   ██║   ██║██╔══██╗
 ██║  ██║███████║╚██████╗██║██║   ██║  ██║██║ ╚████║██║██║ ╚═╝ ██║██║  ██║   ██║   ╚██████╔╝██║  ██║
 ╚═╝  ╚═╝╚══════╝ ╚═════╝╚═╝╚═╝   ╚═╝  ╚═╝╚═╝  ╚═══╝╚═╝╚═╝     ╚═╝╚═╝  ╚═╝   ╚═╝    ╚═════╝ ╚═╝  ╚═╝
-\033[33mA command-line tool to create and run ASCII animations!
-Current Window Width:{WIN_WIDTH:4} |Current Window Height:{WIN_HEIGHT:4}\033[0m
+\033[33mA command-line tool to create and run ASCII animations!\033[0m
+\033[92mWindow Width:{WIN_WIDTH:4} |Window Height:{WIN_HEIGHT:4}\033[0m
+\033[33m____Use CTRL+D or CTRL+Z (Windows) to quit____\033[0m"
 '''
     ansi.place(1, 1, logo)
 
 
 def main() -> None:
+    """Entry point for the package. Initializes global variables and parses arguments to redirect them to a relevant menu"""
 
     parser = argparse.ArgumentParser(description="ASCII Animator Command Line Interface")
     group = parser.add_mutually_exclusive_group()
@@ -35,35 +39,40 @@ def main() -> None:
     group.add_argument('-d', '--delete', action='store_true', help="Delete a project")
     args = parser.parse_args()
 
-    os.system("")
+    os.system("") # This OS command forces current terminal to be compatible with ANSI escape sequences
     global WIN_WIDTH, WIN_HEIGHT
-    WIN_WIDTH = get_dimension("width", 500)
-    WIN_HEIGHT = get_dimension("height", 100)
+    WIN_WIDTH = get_dimension("width", 500) # WIN_WIDTH is defined as number possible of characters that can be placed horizontally in current cleared terminal
+    WIN_HEIGHT = get_dimension("height", 100)  # WIN_HEIGHT is defined as number possible of characters that can be placed vertically in current cleared terminal
     if WIN_WIDTH < 100:
         header()
         sys.exit(">> Width must be atleast 100 characters long. Resize the terminal and try again")
 
-    if args.new:
-        new_project()
-    elif args.load:
-        load_project()
-    elif args.play:
-        play_animation()
-    elif args.delete:
-        delete_project()
-    else:
-        main_menu()
+    try:
+        if args.new:
+            new_project()
+        elif args.load:
+            load_project()
+        elif args.play:
+            play_animation()
+        elif args.delete:
+            delete_project()
+        else:
+            main_menu()
+    except EOFError:
+        header()
+        print("Thank you for using ASCII Animator!")
+        sys.exit()
 
 
 def main_menu() -> None:
+    """Main menu that gives access to all functionalities"""
+
     header()
     print("\033[92mCreate new project |Load existing project |Play animation from saved projects |Delete a project\033[0m")
-    print("\033[33m____Enter 'quit' or 'q' to quit____\033[0m")
 
     ans = input("New Project? (y/N) ").strip().lower()
     yes = ['yes', 'y']
     no = ['no', 'n']
-    quit = ['quit', 'q']
 
     if ans in yes:
         new_project()
@@ -79,19 +88,11 @@ def main_menu() -> None:
                 ans = input("Delete Project? (y/N) ").strip().lower()
                 if ans in yes:
                     delete_project()
-                elif ans in quit:
-                    sys.exit()
-            elif ans in quit:
-                sys.exit()
-        elif ans in quit:
-            sys.exit()
-    elif ans in quit:
-        sys.exit()
-    header()
-    print("Thank you for using ASCII Animator!")
 
 
 def new_project() -> None:
+    """Validates name, width and height to create and run a new project using animator"""
+
     header()
     print("\033[92mCreate a new project\033[0m")
 
@@ -101,6 +102,7 @@ def new_project() -> None:
             break
         print(">> Error: Invalid name!")
         print(">> Name must contain [a-z], [A-Z], [0-9], '-', '_' or <space>")
+
     while True:
         try:    
             width = int(input("Enter Frame Width: "))
@@ -114,6 +116,7 @@ def new_project() -> None:
             print(">> Enter different dimensions or resize the window and try again")
             continue
         break
+
     while True:
         try:    
             height = int(input("Enter Frame Height: "))
@@ -133,6 +136,8 @@ def new_project() -> None:
 
 
 def load_project() -> None:
+    """Validates width and height to load and run an existing project using animator"""
+
     header()
     print("\033[92mLoad an existing project\033[0m")
 
@@ -146,6 +151,8 @@ def load_project() -> None:
 
 
 def play_animation() -> None:
+    """Validates width, height and frame rate to load and play animation for a project"""
+
     header()
     print("\033[92mPlay animation from saved projects\033[0m")
 
@@ -169,6 +176,8 @@ def play_animation() -> None:
 
 
 def delete_project() -> None:
+    """Deletes an exisitng project"""
+
     header()
     print("\033[92mDelete a project\033[0m")
 
@@ -181,6 +190,13 @@ def delete_project() -> None:
 
 
 def get_project():
+    """
+    Displays all projects and returns path to chosen project
+    
+    Returns:
+        str: absolute path to a project file
+    """
+
     all_files = get_all_files()
     for i, file in enumerate(all_files, start=1):
         print(f"Enter {i:2} to select --> {" ".join(file[:-5].split("_")).title()}")
@@ -195,14 +211,21 @@ def get_project():
             continue
         break
 
-    current_dir = os.path.dirname(os.path.abspath(__file__))
+    current_dir = os.path.dirname(os.path.abspath(__file__)) # Get absolute path to directory running this file
     file_path = os.path.join(current_dir, "projects", all_files[file_number - 1])
     return file_path
 
 
 def get_all_files():
+    """
+    Helper function to fetch list of file names for all projects
+    
+    Returns:
+        list: file names of of all projects
+    """
+
     all_files = []
-    current_dir = os.path.dirname(os.path.abspath(__file__))
+    current_dir = os.path.dirname(os.path.abspath(__file__)) # Get absolute path to directory running this file
     projects_dir = os.path.join(current_dir, "projects")
 
     for file in os.listdir(projects_dir):
@@ -212,11 +235,22 @@ def get_all_files():
 
 
 def get_dimension(dimension, limit):
+    """
+    Get width or height (in character spaces) of the terminal running this program using ANSI sequence to get cursor position.
+
+    Args:
+        dimension(str): to indicate width or height
+        limit(int): co-ordinate for placing the cursor
+
+    Returns:
+        int: width (represented by column) or height (represented by row) or return value of a recursive functional call
+    """
+
     if dimension == "width":
-        ansi.place(limit, 1, end="")
+        ansi.place(limit, 1, end="") # Place cursor horizontally at a high number
     elif dimension == "height":
-        ansi.place(1, limit, end="")
-    keyboard.press_and_release('enter')
+        ansi.place(1, limit, end="") # Place cursor vertically at a high number
+    keyboard.press_and_release('enter') # Simulate enter keypress to avoid input blocking by stdin
     print("\033[6n")
 
     response = ""
@@ -229,11 +263,11 @@ def get_dimension(dimension, limit):
     row, column = map(int, response[2:-1].split(";"))
 
     if dimension == "width":
-        if column < limit:
+        if column < limit: # Return width/ column if cursor position less than limit
             return column
     elif dimension == "height":
-        if row < limit:
-            return row
+        if row < limit: # Return height/ row if cursor position less than limit
+            return row 
         
-    limit += limit
+    limit += limit # Double the limit to increase chances of finding end in the next function call
     return get_dimension(dimension, limit)

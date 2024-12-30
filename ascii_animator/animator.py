@@ -13,27 +13,6 @@ CONTROLS = '''\033[92m_____CONTROLS: Press ESC to quit & use ARROW KEYS to move_
 \033[33mTAB + >\033[0m -- load next frame |\033[33mTAB + BACKSPACE\033[0m   -- wipes current frame
 \033[33mTAB + <\033[0m -- load prev frame |\033[33mTAB + DELETE or D\033[0m -- delete current frame
 '''
-'''
-esc -> save and quit program
-up -> moves cursor up
-down -> moves cursor down
-right -> moves cursor right
-left -> moves cursor left
-character -> adds the character and moves cursor forward
-shift + character -> adds alternate version of character and moves cursor forward
-space -> adds whitespace and moves cursor forward
-backspace -> adds whitespace and moves cursor backward
-delete -> adds whitespace without moving cursor
-tab + s -> save current progress in file
-tab + p -> animate current progress
-tab + v -> paste copied character from clipboard
-tab + right -> load next frame
-tab + left -> load previous frame
-tab + n -> add new frame next to current frame
-tab + c -> copy current frame and add copied frame next to current frame
-tab + backspace -> wipes current frame
-tab + d or ctrl + delete -> delete current frame data
-'''
 
 
 def run(animation) -> None:
