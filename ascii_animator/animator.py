@@ -1,8 +1,10 @@
-import ansi
-import time
+from . import ansi
+
 import keyboard
 import pygetwindow as gw
 import pyperclip as clip
+
+import time
 
 
 CONTROLS = '''\033[92m_____CONTROLS: Press ESC to quit & use ARROW KEYS to move_____\033[0m

@@ -1,26 +1,28 @@
-from animation import Animation
-import animator
-import ansi
+from .animation import Animation
+from . import animator
+from . import ansi
+
+import keyboard
+
 import os
 import sys
-import keyboard
-import argparse
 import re
+import argparse
 
 
 def header() -> None:
     ansi.clear()
-    logo = '''
+    logo = f'''
  █████╗ ███████╗ ██████╗██╗██╗    █████╗ ███╗   ██╗██╗███╗   ███╗ █████╗ ████████╗ ██████╗ ██████╗ 
 ██╔══██╗██╔════╝██╔════╝██║██║   ██╔══██╗████╗  ██║██║████╗ ████║██╔══██╗╚══██╔══╝██╔═══██╗██╔══██╗
 ███████║███████╗██║     ██║██║   ███████║██╔██╗ ██║██║██╔████╔██║███████║   ██║   ██║   ██║██████╔╝
 ██╔══██║╚════██║██║     ██║██║   ██╔══██║██║╚██╗██║██║██║╚██╔╝██║██╔══██║   ██║   ██║   ██║██╔══██╗
 ██║  ██║███████║╚██████╗██║██║   ██║  ██║██║ ╚████║██║██║ ╚═╝ ██║██║  ██║   ██║   ╚██████╔╝██║  ██║
 ╚═╝  ╚═╝╚══════╝ ╚═════╝╚═╝╚═╝   ╚═╝  ╚═╝╚═╝  ╚═══╝╚═╝╚═╝     ╚═╝╚═╝  ╚═╝   ╚═╝    ╚═════╝ ╚═╝  ╚═╝
-Make cool ascii animations!
+\033[33mA command-line tool to create and run ASCII animations!
+Current Window Width:{WIN_WIDTH:4} |Current Window Height:{WIN_HEIGHT:4}\033[0m
 '''
     ansi.place(1, 1, logo)
-    print(f"Current Window Width:{WIN_WIDTH:4} |Current Window Height: {WIN_HEIGHT:4}")
 
 
 def main() -> None:
@@ -31,12 +33,15 @@ def main() -> None:
     group.add_argument('-l', '--load', action='store_true', help="Load an existing project")
     group.add_argument('-p', '--play', action='store_true', help="Play an animation")
     group.add_argument('-d', '--delete', action='store_true', help="Delete a project")
-
     args = parser.parse_args()
+
     os.system("")
     global WIN_WIDTH, WIN_HEIGHT
     WIN_WIDTH = get_dimension("width", 500)
     WIN_HEIGHT = get_dimension("height", 100)
+    if WIN_WIDTH < 100:
+        header()
+        sys.exit(">> Width must be atleast 100 characters long. Resize the terminal and try again")
 
     if args.new:
         new_project()
@@ -52,11 +57,13 @@ def main() -> None:
 
 def main_menu() -> None:
     header()
-    print("Create a new project | Load an existing project | Play animation from saved projects | Delete a project")
+    print("\033[92mCreate new project |Load existing project |Play animation from saved projects |Delete a project\033[0m")
+    print("\033[33m____Enter 'quit' or 'q' to quit____\033[0m")
 
     ans = input("New Project? (y/N) ").strip().lower()
     yes = ['yes', 'y']
     no = ['no', 'n']
+    quit = ['quit', 'q']
 
     if ans in yes:
         new_project()
@@ -72,13 +79,21 @@ def main_menu() -> None:
                 ans = input("Delete Project? (y/N) ").strip().lower()
                 if ans in yes:
                     delete_project()
-                elif ans in no:
-                    ...
+                elif ans in quit:
+                    sys.exit()
+            elif ans in quit:
+                sys.exit()
+        elif ans in quit:
+            sys.exit()
+    elif ans in quit:
+        sys.exit()
+    header()
+    print("Thank you for using ASCII Animator!")
 
 
 def new_project() -> None:
     header()
-    print("Create a new project")
+    print("\033[92mCreate a new project\033[0m")
 
     while True:
         name = input("Enter Project Name: ")
@@ -119,7 +134,7 @@ def new_project() -> None:
 
 def load_project() -> None:
     header()
-    print("Load an existing project")
+    print("\033[92mLoad an existing project\033[0m")
 
     if file_path := get_project():
         movie = Animation.load(file_path)
@@ -132,7 +147,7 @@ def load_project() -> None:
 
 def play_animation() -> None:
     header()
-    print("Play animation from saved projects")
+    print("\033[92mPlay animation from saved projects\033[0m")
 
     if file_path := get_project():
         movie = Animation.load(file_path)
@@ -155,7 +170,7 @@ def play_animation() -> None:
 
 def delete_project() -> None:
     header()
-    print("Delete a project")
+    print("\033[92mDelete a project\033[0m")
 
     if file_path := get_project():
         os.remove(file_path)
@@ -222,7 +237,3 @@ def get_dimension(dimension, limit):
         
     limit += limit
     return get_dimension(dimension, limit)
-
-
-if __name__ == "__main__":
-    main()

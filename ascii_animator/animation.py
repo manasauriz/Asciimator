@@ -1,4 +1,5 @@
-import ansi
+from . import ansi
+
 import time
 import json
 import os

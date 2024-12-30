@@ -1,3 +1,0 @@
-keyboard==0.13.5
-PyGetWindow==0.0.9
-pyperclip==1.9.0
