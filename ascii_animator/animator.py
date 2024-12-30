@@ -16,13 +16,35 @@ CONTROLS = '''\033[92m_____CONTROLS: Press ESC to quit & use ARROW KEYS to move_
 
 
 def run(animation) -> None:
+    """
+    Initialize animator window, set up global variables, check if terminal is active and controls for various keyboard events
+
+    Keyboard Events and Controls:
+        esc: save and quit program
+        arrow keys: move cursor around frame
+        character key: add character on screen and move cursor forward
+        shift + character key: add alternate version of character on screen and move cursor forward
+        space: add whitespace character on screen and move cursor forward
+        backspace: add whitespace character on screen and move cursor backward
+        delete: add whitespace character on screen without moving cursor
+        ctrl + v: add copied characters on screen, as much as a line can fit
+        tab + s: save current progress in file
+        tab + p: play animation of current progress
+        tab + right or '>' -> load next frame
+        tab + left or '<' -> load previous frame
+        tab + n -> add new frame next to current frame
+        tab + m -> copy current frame and add copied frame next to current frame
+        tab + backspace -> wipes current frame
+        tab + d or delete -> delete current frame data
+    """
+
     global name, width, height, frames, cur, x, y
     name = animation.name
     width = animation.width
     height = animation.height
     frames = animation.frames
-    cur = len(frames) - 1
-    x, y = 2, 2
+    cur = len(frames) - 1 # Represents current active frame
+    x, y = 2, 2 # Represent current coordinated in frame
 
     load_window()   
     title = gw.getActiveWindowTitle()
@@ -30,22 +52,22 @@ def run(animation) -> None:
 
     while True:
         new_title = gw.getActiveWindowTitle()
-        if not new_title or (new_title not in title) or (title not in new_title):
+        if not new_title or (new_title not in title) or (title not in new_title): # If current window is not the terminal program started running in
             if blocked:
                 blocked = False
                 block_controls(blocked)
             time.sleep(0.1)
             continue
-        else:
+        else: # If current window is the terminal program started running in
             if not blocked:
                 blocked = True
                 block_controls(blocked)
                 
-            ansi.cursor(x, y + 1)
+            ansi.cursor(x, y + 1) # Place cursor below current coordinates
             event = keyboard.read_event()
             key = event.name
             if event.event_type == keyboard.KEY_DOWN:
-                ansi.place(x, y + 1, frames[cur][index(x, y + 1)])
+                ansi.place(x, y + 1, frames[cur][index(x, y + 1)]) # Restore previous character at cursor's place
 
                 if key == 'esc': 
                     break
@@ -134,14 +156,16 @@ def run(animation) -> None:
 
     animation.frames = frames
     animation.save()
-    ansi.place(1, height + 8)
-    ansi.show()
     if blocked:
         blocked = False
         block_controls(blocked)
+    ansi.place(1, height + 8)
+    ansi.show()
 
 
 def load_frame() -> None:
+    """Display current frame and info related to it"""
+
     ansi.place(1, 1, frames[cur])
     fname = name if len(name) <= 20 else name[:17] + "..."
     frame_info = f"\033[33mCURRENT FRAME:\033[0m{cur + 1:4} |\033[33mTOTAL FRAMES:\033[0m{len(frames):4} |\033[33m{fname:20}\033[0m ({width} X {height})"
@@ -149,6 +173,8 @@ def load_frame() -> None:
 
 
 def load_window() -> None:
+    """Initialize window on screen and display frame and controls"""
+
     ansi.hide()
     ansi.clear()
     load_frame()
@@ -156,17 +182,41 @@ def load_window() -> None:
 
 
 def index(x, y):
-    '''calculates where index would be in str frame according to current x, y co-ords'''
+    """
+    Calculate where index would be in frame string according to current x, y co-ords
+    
+    Args:
+        x(int): current x coordinate
+        y(int): current y coordinate
+
+    Returns:
+        int: index in frame string
+    """
+
     return ((width + 3) * (y - 1)) + (x - 1)
 
 
 def add_character(c) -> None:
+    """
+    Add character on screen and in frame at current x, y coordinates
+    
+    Args:
+        c(str): character string to be added
+    """
+    
     ansi.place(x, y, c)
     i = index(x, y)
     frames[cur] = frames[cur][:i] + c + frames[cur][i + 1:]
 
 
-def block_controls(flag):
+def block_controls(flag) -> None:
+    """
+    Toggle blocking of certain keys like enter that can hinder program execution
+
+    Args:
+        flag(bool): True indicates block, False indicates unblock
+    """
+
     keys = ['enter']
     if flag:
         for key in keys:
@@ -177,6 +227,13 @@ def block_controls(flag):
 
 
 def get_frame_rate():
+    """
+    Clear display and get frame rate from user to play animation
+
+    Returns:
+        int: frame rate
+    """
+
     ansi.show()
     keyboard.unblock_key('enter')
     keyboard.press_and_release('enter')

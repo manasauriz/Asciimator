@@ -21,10 +21,9 @@ def header() -> None:
 ██╔══██║╚════██║██║     ██║██║   ██╔══██║██║╚██╗██║██║██║╚██╔╝██║██╔══██║   ██║   ██║   ██║██╔══██╗
 ██║  ██║███████║╚██████╗██║██║   ██║  ██║██║ ╚████║██║██║ ╚═╝ ██║██║  ██║   ██║   ╚██████╔╝██║  ██║
 ╚═╝  ╚═╝╚══════╝ ╚═════╝╚═╝╚═╝   ╚═╝  ╚═╝╚═╝  ╚═══╝╚═╝╚═╝     ╚═╝╚═╝  ╚═╝   ╚═╝    ╚═════╝ ╚═╝  ╚═╝
-\033[33mA command-line tool to create and run ASCII animations!\033[0m
-\033[92mWindow Width:{WIN_WIDTH:4} |Window Height:{WIN_HEIGHT:4}\033[0m
-\033[33m____Use CTRL+D or CTRL+Z (Windows) to quit____\033[0m"
-'''
+                  \033[33mA command-line tool to create and run ASCII animations!
+
+____Window Width:{WIN_WIDTH:4} |Window Height:{WIN_HEIGHT:4}| CTRL+C or CTRL+D or CTRL+Z to quit____\033[0m'''
     ansi.place(1, 1, logo)
 
 
@@ -58,10 +57,11 @@ def main() -> None:
             delete_project()
         else:
             main_menu()
-    except EOFError:
-        header()
-        print("Thank you for using ASCII Animator!")
-        sys.exit()
+    except (EOFError, KeyboardInterrupt):
+        pass
+    header()
+    print("Thank you for using ASCII Animator!")
+    sys.exit()
 
 
 def main_menu() -> None:
@@ -240,7 +240,7 @@ def get_dimension(dimension, limit):
 
     Args:
         dimension(str): to indicate width or height
-        limit(int): co-ordinate for placing the cursor
+        limit(int): coordinate for placing the cursor
 
     Returns:
         int: width (represented by column) or height (represented by row) or return value of a recursive functional call
