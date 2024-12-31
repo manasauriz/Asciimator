@@ -19,6 +19,9 @@ def run(animation) -> None:
     """
     Initialize animator window, set up global variables, check if terminal is active and controls for various keyboard events
 
+    Args:
+        animation(Animation) - Animation object
+
     Keyboard Events and Controls:
         esc: save and quit program
         arrow keys: move cursor around frame
@@ -30,12 +33,12 @@ def run(animation) -> None:
         ctrl + v: add copied characters on screen, as much as a line can fit
         tab + s: save current progress in file
         tab + p: play animation of current progress
-        tab + right or '>' -> load next frame
-        tab + left or '<' -> load previous frame
-        tab + n -> add new frame next to current frame
-        tab + m -> copy current frame and add copied frame next to current frame
-        tab + backspace -> wipes current frame
-        tab + d or delete -> delete current frame data
+        tab + right or '>': load next frame
+        tab + left or '<': load previous frame
+        tab + n: add new frame next to current frame
+        tab + m: copy current frame and add copied frame next to current frame
+        tab + backspace: wipes current frame
+        tab + d or delete: delete current frame data
     """
     global name, width, height, frames, cur, x, y
     name = animation.name
@@ -229,7 +232,7 @@ def get_frame_rate():
     """
     ansi.show()
     keyboard.unblock_key('enter')
-    keyboard.press_and_release('enter')
+    keyboard.press_and_release('enter') # Refreshes screen to clear 'residue'
     while True:
         try:
             ansi.clear()

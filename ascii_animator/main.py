@@ -39,8 +39,8 @@ def main() -> None:
 
     os.system("") # This OS command forces current terminal to be compatible with ANSI escape sequences
     global WIN_WIDTH, WIN_HEIGHT
-    WIN_WIDTH = get_dimension("width", 500) # WIN_WIDTH is defined as number possible of characters that can be placed horizontally in current cleared terminal
-    WIN_HEIGHT = get_dimension("height", 100)  # WIN_HEIGHT is defined as number possible of characters that can be placed vertically in current cleared terminal
+    WIN_WIDTH = get_dimension("width", 500) # WIN_WIDTH is defined as number of possible characters that can be placed horizontally in current cleared terminal
+    WIN_HEIGHT = get_dimension("height", 100)  # WIN_HEIGHT is defined as number of possible characters that can be placed vertically in current cleared terminal
     if WIN_WIDTH < 100:
         header()
         sys.exit(">> Width must be atleast 100 characters long. Resize the terminal and try again")
