@@ -22,8 +22,18 @@ def header() -> None:
 ╚═╝  ╚═╝╚══════╝ ╚═════╝╚═╝╚═╝   ╚═╝  ╚═╝╚═╝  ╚═══╝╚═╝╚═╝     ╚═╝╚═╝  ╚═╝   ╚═╝    ╚═════╝ ╚═╝  ╚═╝
                   \033[33mA command-line tool to create and run ASCII animations!
 
-____Window Width:{WIN_WIDTH:4} |Window Height:{WIN_HEIGHT:4}| CTRL+C or CTRL+D or CTRL+Z to quit____\033[0m'''
+____Window Width:{WIN_WIDTH:4} |Window Height:{WIN_HEIGHT:4} |CTRL+C or CTRL+D or CTRL+Z to quit____\033[0m'''
     ansi.place(1, 1, logo)
+
+
+class DimensionError(Exception):
+    """Raised when entered dimension is less than the active terminal window dimensions"""
+    pass
+
+
+class WindowError(Exception):
+    """Raise when the selected project cannot be opened in active terminal window"""
+    pass
 
 
 def main() -> None:
@@ -39,28 +49,42 @@ def main() -> None:
 
     os.system("") # This OS command forces current terminal to be compatible with ANSI escape sequences
     global WIN_WIDTH, WIN_HEIGHT
-    WIN_WIDTH = get_dimension("width", 500) # WIN_WIDTH is defined as number of possible characters that can be placed horizontally in current cleared terminal
-    WIN_HEIGHT = get_dimension("height", 100)  # WIN_HEIGHT is defined as number of possible characters that can be placed vertically in current cleared terminal
-    if WIN_WIDTH < 100:
-        header()
-        sys.exit(">> Width must be atleast 100 characters long. Resize the terminal and try again")
+    WIN_WIDTH = get_dimension("width", 500) - 5 # WIN_WIDTH is defined as number of possible characters that can be placed horizontally in current cleared terminal
+    WIN_HEIGHT = get_dimension("height", 100) - 5  # WIN_HEIGHT is defined as number of possible characters that can be placed vertically in current cleared terminal
+    
+    message = ""
+    if WIN_WIDTH < 95 or WIN_HEIGHT < 5:
+        message += ">> Terminal width must be atleast 95 to run asciimation\n"
+        message += ">> Terminal height must be atleast 5 to run asciimation\n"
+        message += ">> Resize the terminal and try again\n"
+    else:
 
-    try:
-        if args.new:
-            new_project()
-        elif args.load:
-            load_project()
-        elif args.play:
-            play_animation()
-        elif args.delete:
-            delete_project()
-        else:
-            main_menu()
-    except (EOFError, KeyboardInterrupt):
-        pass
+        try:
+            if args.new:
+                new_project()
+            elif args.load:
+                load_project()
+            elif args.play:
+                play_animation()
+            elif args.delete:
+                delete_project()
+            else:
+                main_menu()
+
+        except (EOFError, KeyboardInterrupt):
+            message += ">> Quitting...\n"
+        except DimensionError:
+            message += f">> Width cannot be more than {WIN_WIDTH} in this terminal\n"
+            message += f">> Height cannot be more than {WIN_HEIGHT} in this terminal\n"
+            message += ">> Enter different dimensions or resize the window and try again\n"
+        except WindowError:
+            message += ">> Error: This project cannot be opened in this window\n"
+            message += ">> Increase terminal size and try again\n"
+
     header()
-    print("Thank you for using ASCII Animator!")
-    sys.exit()
+    message += "Thank you for using ASCII Animator!"
+    keyboard.press_and_release('esc')
+    sys.exit(message)
 
 
 def main_menu() -> None:
@@ -108,10 +132,8 @@ def new_project() -> None:
         except ValueError:
             print(">> Error: Enter a valid positve number")
             continue
-        if width > WIN_WIDTH - 5:
-            print(f">> Error: Width cannot be more than {WIN_WIDTH - 5}")
-            print(">> Enter different dimensions or resize the window and try again")
-            continue
+        if width > WIN_WIDTH:
+            raise DimensionError
         break
 
     while True:
@@ -122,10 +144,8 @@ def new_project() -> None:
         except ValueError:
             print(">> Error: Enter a valid positve number")
             continue
-        if height > WIN_HEIGHT - 10:
-            print(f">> Error: Height cannot be more than {WIN_HEIGHT - 10}")
-            print(">> Enter different dimensions or resize the window and try again")
-            continue
+        if height > WIN_HEIGHT:
+            raise DimensionError
         break
 
     movie = Animation(name.strip(), width, height)
@@ -139,9 +159,8 @@ def load_project() -> None:
 
     if file_path := get_project():
         movie = Animation.load(file_path)
-        if movie.width > WIN_WIDTH - 5 or movie.height > WIN_HEIGHT - 10:
-            print(f">> Error: {movie.name} cannot be opened in this window")
-            print(">> Increase terminal size and try again")
+        if movie.width > WIN_WIDTH or movie.height > WIN_HEIGHT:
+            raise WindowError
         else:
             animator.run(movie)
 
@@ -154,9 +173,8 @@ def play_animation() -> None:
     if file_path := get_project():
         movie = Animation.load(file_path)
         
-        if movie.width > WIN_WIDTH - 5 or movie.height > WIN_HEIGHT - 5:
-            print(f">> Error: {movie.name} cannot be played in this window")
-            print(">> Increase terminal size and try again")
+        if movie.width > WIN_WIDTH or movie.height > WIN_HEIGHT:
+            raise WindowError
         else:
             while True:
                 try:

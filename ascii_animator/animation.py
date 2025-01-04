@@ -72,9 +72,9 @@ class Animation:
         for frame in self.frames:
             ansi.place(1, 1, frame)
             time.sleep(1 / frame_rate)
-        time.sleep(2)
+        time.sleep(1)
         
-        ansi.place(1, self.height + 4)
+        ansi.place(1, self.height + 5)
         ansi.show()
 
 

@@ -35,3 +35,8 @@ def cursor(x = 0, y = 0) -> None:
             y(int): y position of cursor
         """
     print(f"\033[91m\033[{y};{x}H^\033[0m")
+
+
+def clear_and_place(line = 0, text = "") -> None:
+    """ANSI escape sequence to move cursor to a particular line, clear it entirely and (optionally) place some text"""
+    print(f"\033[{line};0H\033[0K{text}", end="")
