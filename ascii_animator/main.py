@@ -210,7 +210,7 @@ def get_project():
     """
     all_files = get_all_files()
     for i, file in enumerate(all_files, start=1):
-        print(f"Enter {i:2} to select --> {" ".join(file[:-5].split("_")).title()}") # Display an appropriate project name
+        print(f"Enter {i:2} to select --> {' '.join(file[:-5].split('_')).title()}") # Display an appropriate project name
 
     while True:
         try:
