@@ -38,7 +38,7 @@ class Animation:
         """
         frame = f"+{'-' * self.width}+\n"
         for i in range(2, self.height + 2):
-            frame += f"|{(" " * self.width)}|\n"
+            frame += f"|{(' ' * self.width)}|\n"
         frame += f"+{'-' * self.width}+\n"
         return frame
 
