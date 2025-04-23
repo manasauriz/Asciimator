@@ -21,7 +21,7 @@ Currently, `asciimator` is Windows compatible only. I will make it Linux compati
 1. Clone the repository:
    ```bash
    git clone https://github.com/manasauriz/Asciimator.git
-   cd asciimator
+   cd Asciimator
    ```
 2. Run the following command:
     ```bash

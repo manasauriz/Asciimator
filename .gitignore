@@ -170,5 +170,6 @@ cython_debug/
 # PyPI configuration file
 .pypirc
 
+# Personal files
 sandbox.py
-Demo.mp4
+Asciimator-Demo.mp4

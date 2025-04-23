@@ -244,7 +244,7 @@ def load_window() -> None:
     ansi.hide()
     ansi.clear()
     load_frame()
-    ansi.clear_and_place(height + 4, "\033[92m_____Press ESC to quit |Use ARROW KEYS to move |Press ALT for all Controls_____\033[0m")
+    ansi.clear_and_place(height + 4, "\033[92m__Press ESC to quit |Use ARROW KEYS to move |Press ALT for all Controls__\033[0m")
 
 
 def index(x, y):

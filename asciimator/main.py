@@ -22,7 +22,7 @@ def header() -> None:
 ╚═╝  ╚═╝╚══════╝ ╚═════╝╚═╝╚═╝╚═╝     ╚═╝╚═╝  ╚═╝   ╚═╝    ╚═════╝ ╚═╝  ╚═╝
         \033[33mA command-line tool to create and run ASCII animations!
 
-____Window Width:{WIN_WIDTH:4} |Window Height:{WIN_HEIGHT:4} |CTRL+C or CTRL+D or CTRL+Z to quit____\033[0m'''
+__Window Width:{WIN_WIDTH:4} |Window Height:{WIN_HEIGHT:4} |CTRL+C or CTRL+D or CTRL+Z to quit__\033[0m'''
     ansi.place(1, 1, logo)
 
 
