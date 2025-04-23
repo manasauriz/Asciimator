@@ -14,13 +14,13 @@ def header() -> None:
     """Header logo to be added at the beginning of each menu"""
     ansi.clear()
     logo = f'''
- █████╗ ███████╗ ██████╗██╗██╗    █████╗ ███╗   ██╗██╗███╗   ███╗ █████╗ ████████╗ ██████╗ ██████╗ 
-██╔══██╗██╔════╝██╔════╝██║██║   ██╔══██╗████╗  ██║██║████╗ ████║██╔══██╗╚══██╔══╝██╔═══██╗██╔══██╗
-███████║███████╗██║     ██║██║   ███████║██╔██╗ ██║██║██╔████╔██║███████║   ██║   ██║   ██║██████╔╝
-██╔══██║╚════██║██║     ██║██║   ██╔══██║██║╚██╗██║██║██║╚██╔╝██║██╔══██║   ██║   ██║   ██║██╔══██╗
-██║  ██║███████║╚██████╗██║██║   ██║  ██║██║ ╚████║██║██║ ╚═╝ ██║██║  ██║   ██║   ╚██████╔╝██║  ██║
-╚═╝  ╚═╝╚══════╝ ╚═════╝╚═╝╚═╝   ╚═╝  ╚═╝╚═╝  ╚═══╝╚═╝╚═╝     ╚═╝╚═╝  ╚═╝   ╚═╝    ╚═════╝ ╚═╝  ╚═╝
-                  \033[33mA command-line tool to create and run ASCII animations!
+ █████╗ ███████╗ ██████╗██╗██╗███╗   ███╗ █████╗ ████████╗ ██████╗ ██████╗ 
+██╔══██╗██╔════╝██╔════╝██║██║████╗ ████║██╔══██╗╚══██╔══╝██╔═══██╗██╔══██╗
+███████║███████╗██║     ██║██║██╔████╔██║███████║   ██║   ██║   ██║██████╔╝
+██╔══██║╚════██║██║     ██║██║██║╚██╔╝██║██╔══██║   ██║   ██║   ██║██╔══██╗
+██║  ██║███████║╚██████╗██║██║██║ ╚═╝ ██║██║  ██║   ██║   ╚██████╔╝██║  ██║
+╚═╝  ╚═╝╚══════╝ ╚═════╝╚═╝╚═╝╚═╝     ╚═╝╚═╝  ╚═╝   ╚═╝    ╚═════╝ ╚═╝  ╚═╝
+        \033[33mA command-line tool to create and run ASCII animations!
 
 ____Window Width:{WIN_WIDTH:4} |Window Height:{WIN_HEIGHT:4} |CTRL+C or CTRL+D or CTRL+Z to quit____\033[0m'''
     ansi.place(1, 1, logo)
@@ -39,7 +39,7 @@ class WindowError(Exception):
 def main() -> None:
     """Entry point for the package. Initializes global variables and parses arguments to redirect them to a relevant menu"""
 
-    parser = argparse.ArgumentParser(description="ASCII Animator Command Line Interface")
+    parser = argparse.ArgumentParser(description="Asciimator Command Line Interface")
     group = parser.add_mutually_exclusive_group()
     group.add_argument('-n', '--new', action='store_true', help="Start a new project")
     group.add_argument('-l', '--load', action='store_true', help="Load an existing project")
@@ -82,7 +82,7 @@ def main() -> None:
             message += ">> Increase terminal size and try again\n"
 
     header()
-    message += "Thank you for using ASCII Animator!"
+    message += "Thank you for using Asciimator!"
     keyboard.press_and_release('esc')
     sys.exit(message)
 
@@ -90,7 +90,7 @@ def main() -> None:
 def main_menu() -> None:
     """Main menu that gives access to all functionalities"""
     header()
-    print("\033[92mCreate new project |Load existing project |Play animation from saved projects |Delete a project\033[0m")
+    print("\033[92mCreate new project |Load existing project |Play saved animation |Delete a project\033[0m")
 
     ans = input("New Project? (y/N) ").strip().lower()
     yes = ['yes', 'y']

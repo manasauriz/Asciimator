@@ -1,9 +1,9 @@
 ![Demo](demo.gif)
 ---
 
-# **ASCII Animator**
+# **Asciimator**
 
-ASCII Animator is a command-line tool for creating and playing frame-by-frame traditional animations using ASCII art. It is written and structured as a python package.
+Asciimator is a command-line tool for creating and playing frame-by-frame traditional animations using ASCII art. It is written and structured as a python package.
 
 ---
 
@@ -16,12 +16,12 @@ ASCII Animator is a command-line tool for creating and playing frame-by-frame tr
 ---
 
 ## **Installation**
-Currently, `ascii_animator` is Windows compatible only. I will make it Linux compatible soon. To install the tool:
+Currently, `asciimator` is Windows compatible only. I will make it Linux compatible soon. To install the tool:
 
 1. Clone the repository:
    ```bash
-   git clone https://github.com/manasauriz/ASCII_Animator.git
-   cd ascii_animator
+   git clone https://github.com/manasauriz/Asciimator.git
+   cd asciimator
    ```
 2. Run the following command:
     ```bash
@@ -35,34 +35,34 @@ Currently, `ascii_animator` is Windows compatible only. I will make it Linux com
 ---
 
 ## **Usage**
-After installation, you can use the `ascii_animator` command directly from your terminal.
+After installation, you can use the `asciimator` command directly from your terminal.
 
 ### **Commands**
 - Open the main menu:
   ```bash
-  ascii_animator
+  asciimator
   ```
 - Start a new project:
   ```bash
-  ascii_animator -n
+  asciimator -n
   ```
 - Load an existing project:
   ```bash
-  ascii_animator -l
+  asciimator -l
   ```
 - Play an animation:
   ```bash
-  ascii_animator -p
+  asciimator -p
   ```
 - Delete a project:
   ```bash
-  ascii_animator -d
+  asciimator -d
   ```
 
 ### **Help Command**
 To view available commands and options, use:
 ```bash
-ascii_animator -h
+asciimator -h
 ```
 
 ### **Animator Controls**
